@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Discount.gRPC.Services;
 
-public class DiscountService(DiscountContext dbContext, ILogger<DiscountService> logger) : DicountProtoService.DicountProtoServiceBase
+public class DiscountService(DiscountContext dbContext, ILogger<DiscountService> logger) : DiscountProtoService.DiscountProtoServiceBase
 {
     public override async Task<CouponModel> GetDiscount(GetDiscountRequest request, ServerCallContext context)
     {

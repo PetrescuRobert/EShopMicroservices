@@ -10,6 +10,8 @@ var assembly = typeof(Program).Assembly;
 // Add services to the IoC container
 
 // Application Services
+#region Application Services
+
 builder.Services.AddCarter();
 builder.Services.AddMediatR(config =>
 {
@@ -18,7 +20,10 @@ builder.Services.AddMediatR(config =>
     config.AddOpenBehavior(typeof(LoggingBehavior<,>));
 });
 
+#endregion
+
 // Data Services
+#region Data Services
 builder.Services.AddMarten(options =>
 {
     options.Connection(builder.Configuration.GetConnectionString("Database")!);
@@ -40,13 +45,19 @@ builder.Services.AddStackExchangeRedisCache(options =>
     options.Configuration = builder.Configuration.GetConnectionString("Redis");
 });
 
+#endregion
+
 // gRpc Services
+#region gRPC Services
 builder.Services.AddGrpcClient<DiscountProtoService.DiscountProtoServiceClient>(options =>
 {
     options.Address = new Uri(builder.Configuration["GrpcSettings:DiscountUrl"]!);
 });
 
+#endregion
+
 // Cross-Cutting Services
+#region Cross-Cutting Services
 
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();
 
@@ -55,6 +66,7 @@ builder.Services.AddHealthChecks()
     .AddNpgSql(builder.Configuration.GetConnectionString("Database")!)
     .AddRedis(builder.Configuration.GetConnectionString("Redis")!);
 
+#endregion
 
 var app = builder.Build();
 
