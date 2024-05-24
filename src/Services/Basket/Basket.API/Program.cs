@@ -2,11 +2,14 @@ using BuildingBlocks.Exceptions.Handler;
 using HealthChecks.UI.Client;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Discount.gRPC;
 
 var builder = WebApplication.CreateBuilder(args);
 var assembly = typeof(Program).Assembly;
 
 // Add services to the IoC container
+
+// Application Services
 builder.Services.AddCarter();
 builder.Services.AddMediatR(config =>
 {
@@ -15,17 +18,17 @@ builder.Services.AddMediatR(config =>
     config.AddOpenBehavior(typeof(LoggingBehavior<,>));
 });
 
+// Data Services
 builder.Services.AddMarten(options =>
 {
     options.Connection(builder.Configuration.GetConnectionString("Database")!);
     options.Schema.For<ShoppingCart>().Identity(member => member.UserName);
 }).UseLightweightSessions();
 
-
-// Register a decorated repository
-// Also could be done with Scrutor library
 builder.Services.AddScoped<IBasketRepository>(provider =>
 {
+    // Register a decorated repository
+    // Also could be done with Scrutor library
     var basketRepository = provider.GetRequiredService<BasketRepository>();
     var cache = provider.GetRequiredService<IDistributedCache>();
 
@@ -36,6 +39,14 @@ builder.Services.AddStackExchangeRedisCache(options =>
 {
     options.Configuration = builder.Configuration.GetConnectionString("Redis");
 });
+
+// gRpc Services
+builder.Services.AddGrpcClient<DiscountProtoService.DiscountProtoServiceClient>(options =>
+{
+    options.Address = new Uri(builder.Configuration["GrpcSettings:DiscountUrl"]!);
+});
+
+// Cross-Cutting Services
 
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();
 
