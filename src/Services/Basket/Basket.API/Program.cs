@@ -30,15 +30,17 @@ builder.Services.AddMarten(options =>
     options.Schema.For<ShoppingCart>().Identity(member => member.UserName);
 }).UseLightweightSessions();
 
-builder.Services.AddScoped<IBasketRepository>(provider =>
-{
-    // Register a decorated repository
-    // Also could be done with Scrutor library
-    var basketRepository = provider.GetRequiredService<BasketRepository>();
-    var cache = provider.GetRequiredService<IDistributedCache>();
+//builder.Services.AddScoped<IBasketRepository>(provider =>
+//{
+//    // Register a decorated repository
+//    // Also could be done with Scrutor library
+//    var basketRepository = provider.GetRequiredService<BasketRepository>();
+//    var cache = provider.GetRequiredService<IDistributedCache>();
 
-    return new CachedBasketRepository(basketRepository, cache);
-});
+//    return new CachedBasketRepository(basketRepository, cache);
+//});
+builder.Services.AddScoped<IBasketRepository, CachedBasketRepository>();
+builder.Services.AddScoped<IBasketRepository, BasketRepository>(); 
 
 builder.Services.AddStackExchangeRedisCache(options =>
 {
@@ -52,6 +54,12 @@ builder.Services.AddStackExchangeRedisCache(options =>
 builder.Services.AddGrpcClient<DiscountProtoService.DiscountProtoServiceClient>(options =>
 {
     options.Address = new Uri(builder.Configuration["GrpcSettings:DiscountUrl"]!);
+})
+    //Not recommanded in production
+    .ConfigurePrimaryHttpMessageHandler(() =>
+{
+    var handler = new HttpClientHandler { ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator };
+    return handler;
 });
 
 #endregion
