@@ -7,8 +7,10 @@ public static class DependencyInjection
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
         var connectionString = configuration.GetConnectionString("Database");
-        
-        //services.adddbcontext
+
+        services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+
+        //services.AddScoped < IApplicationDb >
 
         return services;
     }
