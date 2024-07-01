@@ -1,9 +1,9 @@
 ﻿using FluentValidation;
 
 namespace Ordering.Application.Orders.Commands.DeleteOrder;
-public record DeleteOrderCommand(Guid OrderId) : ICommand<DeleteOrderCommandResult>;
+public record DeleteOrderCommand(Guid OrderId) : ICommand<DeleteOrderResult>;
 
-public record DeleteOrderCommandResult(bool IsSuccess);
+public record DeleteOrderResult(bool IsSuccess);
 
 public class DeleteOrderCommandValidator : AbstractValidator<DeleteOrderCommand>
 {

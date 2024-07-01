@@ -1,8 +1,8 @@
 ﻿using FluentValidation;
 
 namespace Ordering.Application.Orders.Commands.UpdateOrder;
-public record UpdateOrderCommand(OrderDto Order) : ICommand<UpdateOrderCommandResult>;
-public record UpdateOrderCommandResult(bool IsSusscess);
+public record UpdateOrderCommand(OrderDto Order) : ICommand<UpdateOrderResult>;
+public record UpdateOrderResult(bool IsSusscess);
 
 public class UpdateOrderCommandValidator : AbstractValidator<UpdateOrderCommand>
 {

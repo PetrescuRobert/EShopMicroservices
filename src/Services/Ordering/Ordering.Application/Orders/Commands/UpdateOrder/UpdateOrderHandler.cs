@@ -1,8 +1,8 @@
 ﻿namespace Ordering.Application.Orders.Commands.UpdateOrder;
 
-public class UpdateOrderCommandHandler(IApplicationDbContext dbContext) : ICommandHandler<UpdateOrderCommand, UpdateOrderCommandResult>
+public class UpdateOrderHandler(IApplicationDbContext dbContext) : ICommandHandler<UpdateOrderCommand, UpdateOrderResult>
 {
-    public async Task<UpdateOrderCommandResult> Handle(UpdateOrderCommand command, CancellationToken cancellationToken)
+    public async Task<UpdateOrderResult> Handle(UpdateOrderCommand command, CancellationToken cancellationToken)
     {
         //update order entity from command object
         var orderId = OrderId.Of(command.Order.Id);
@@ -14,7 +14,7 @@ public class UpdateOrderCommandHandler(IApplicationDbContext dbContext) : IComma
         dbContext.Orders.Update(order);
         await dbContext.SaveChangesAsync(cancellationToken);
         //return result
-        return new UpdateOrderCommandResult(true);
+        return new UpdateOrderResult(true);
     }
 
     private void UpdateOrder(Order order, OrderDto orderDto)
