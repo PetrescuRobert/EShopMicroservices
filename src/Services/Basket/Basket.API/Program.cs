@@ -1,8 +1,8 @@
 using BuildingBlocks.Exceptions.Handler;
-using HealthChecks.UI.Client;
-using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using BuildingBlocks.Messaging;
 using Discount.gRPC;
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
 var assembly = typeof(Program).Assembly;
@@ -40,7 +40,7 @@ builder.Services.AddMarten(options =>
 //    return new CachedBasketRepository(basketRepository, cache);
 //});
 builder.Services.AddScoped<IBasketRepository, CachedBasketRepository>();
-builder.Services.AddScoped<IBasketRepository, BasketRepository>(); 
+builder.Services.AddScoped<IBasketRepository, BasketRepository>();
 
 builder.Services.AddStackExchangeRedisCache(options =>
 {
@@ -62,6 +62,11 @@ builder.Services.AddGrpcClient<DiscountProtoService.DiscountProtoServiceClient>(
     return handler;
 });
 
+#endregion
+
+
+#region Async Communication Services
+builder.Services.AddMessageBroker(builder.Configuration);
 #endregion
 
 // Cross-Cutting Services
